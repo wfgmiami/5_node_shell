@@ -1,0 +1,23 @@
+{
+  "name": "5_node_shell",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bash.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wfgmiami/5_node_shell.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wfgmiami/5_node_shell/issues"
+  },
+  "homepage": "https://github.com/wfgmiami/5_node_shell#readme",
+  "dependencies": {
+    "request": "^2.81.0"
+  }
+}

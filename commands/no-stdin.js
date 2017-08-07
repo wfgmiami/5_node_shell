@@ -1,4 +1,5 @@
 /*
+//re-done 8/5/17
 var fs = require('fs');
 
 function ls(){
@@ -7,9 +8,9 @@ function ls(){
 		files.forEach(file => {
 			process.stdout.write(file.toString() + '\n');
 		})
-		
+
 		process.stdout.write('\nprompt> ');
-	})	
+	})
 
 }
 
@@ -20,11 +21,11 @@ function pwd(){
 }
 
 function date(){
-	
+
 	process.stdout.write(Date());
 	process.stdout.write('\nprompt> ');
 }
-    
+
 function echo(args){
 	process.stdout.write(args);
 	process.stdout.write('\nprompt> ');
@@ -37,9 +38,9 @@ function cat(files,next){
 	  files.forEach(file => {
 
 		fs.readFile(file, 'utf8', function(err, data){
-			if(err) return err		
+			if(err) return err
 			next(data);
-			
+
 		})
 	 })
 
@@ -51,7 +52,7 @@ function sortA(files,next){
 
 	files.forEach(file => {
 		fs.readFile(file, 'utf8', function(err, data){
-	
+
 			dataArray = data.split('\n');
 			dataArraySorted = dataArray.sort();
 			next(dataArraySorted.join('\n'));
@@ -82,7 +83,7 @@ function head(files, next){
 		});
 	});
 }
-	
+
 function tail(files, next){
 	files.forEach(file =>{
 		fs.readFile(file, 'utf8', (err, data)=>{
@@ -108,11 +109,11 @@ function uniq(files, next){
 			}
 			next(dataArraySorted.join('\n'));
 		})
-	
+
 	})
 
 }
-	
+
 module.exports ={
 	pwd,
 	date,
@@ -130,40 +131,30 @@ module.exports ={
 
 'use strict';
 const fs = require('fs');
-const chalk = require('chalk');
-const prompt = chalk.blue('\nprompt > ');
 
-function pwd(){
-	process.stdout.write(process.cwd());
-	process.stdout.write(prompt);
-
+function pwd(stdin, args, done){
+	done(process.cwd());
 }
 
-function date(){
-	process.stdout.write(Date());
-	process.stdout.write(prompt);
-
+function date(stdin, args, done){
+	done(Date());
 }
 
-function ls(){
+function ls(stdin, args, done){
 	fs.readdir('.', function(err, filenames){
 		if (err) throw err;
-		
-		process.stdout.write(filenames.join('\n'));
-		process.stdout.write(prompt);
+		done(filenames.join('\n'));
 	})
 }
 
-function echo(args){
+function echo(stdin, args, done){
 	const output = args
 	.split(' ')
 	.map(function(arg) {
 		return (arg[0] === '$') ? process.env[arg.slice(1)] : arg;
 	})
 	.join(' ');
-
-	process.stdout.write(output);
-	process.stdout.write(prompt);
+  done(output);
 }
 
 module.exports = {

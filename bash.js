@@ -68,16 +68,44 @@
 const chalk = require('chalk');
 const prompt = chalk.blue('\nprompt > ');
 const ourCommands = require('./commands');
+var cmdGroups = [];
 
 process.stdout.write(prompt);
 
 process.stdin.on('data', function(data){
 
-  const tokens = data.toString().trim().split(' ');
+  cmdGroups = data.toString().trim().split(/\s*\|\s*/g);
+  const unsafeCommands = getUnsafe(cmdGroups);
+  if(unsafeCommands.length){
+    process.stderr.write(chalk.red('command(s) not found: ' + unsafeCommands.join(' ')));
+    cmdGroups = [];
+    done('');
+  }else{
+    execute(cmdGroups.shift());
+  }
+
+})
+//cat test.txt | head | wc
+
+function getUnsafe(cmdStrings){
+  return cmdStrings
+  .map(cmdString => cmdString.split(' ')[0])
+  .filter(cmd => !ourCommands[cmd]);
+}
+
+function execute(cmdString, lastOutput){
+  const tokens = cmdString.toString().trim().split(' ');
   const cmd = tokens[0];
   const args = tokens.slice(1).join(' ');
 
-  if( ourCommands[cmd] ) ourCommands[cmd](args);
-  else process.stderr.write(chalk.red('command not found: ') + cmd + prompt);
+  if( ourCommands[cmd] ) ourCommands[cmd](lastOutput, args, done);
+}
 
-})
+function done(output){
+  if(cmdGroups.length){
+    execute(cmdGroups.shift(), output);
+  }else{
+    process.stdout.write(output + prompt)
+  }
+
+}
